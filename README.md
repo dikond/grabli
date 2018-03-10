@@ -70,4 +70,4 @@ Make `Intruder` a bit more clever proxy object which delegates to the subject an
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/grabli.
+Bug reports and pull requests are welcome on GitHub at https://github.com/dikond/grabli.

@@ -8,8 +8,8 @@ class Grabli
   # @param user [Object] user object your policy work with
   # @param subject [Symbol, Object] subject object your policy work with
   # @return [Array<Symbol>] array of allowed policy permission
-  # @example
   #
+  # @example
   #   Grabli.new.collect(@user, @company)
   #   #=> [:create?, :update?, :manage_occupied?]
   #
@@ -21,7 +21,7 @@ class Grabli
       .public_instance_methods(false)
       .reject! { |n| n =~ /permitted_attributes/ }
       .each_with_object([]) do |permission, collection|
-        # allows to collect permissions without subject, for more @see Intruder
+        # allows to collect permissions without subject, for more see Intruder
         isubject = subject.is_a?(Symbol) ? Intruder.new(false) : subject
         policy = policy_class(subject).new(user, isubject)
 
@@ -36,8 +36,8 @@ class Grabli
   # @param permission [Symbol] permission name
   # @return [Boolen, Object] true or false in case subject intruded
   #   or whatever you policy permission returns
-  # @example
   #
+  # @example
   #   policy = Pundit.policy(@user, @company)
   #   Grabli.new.allowed?(policy, :create?)
   #   #=> true
@@ -58,9 +58,6 @@ class Grabli
   #
   # If the subject isn't used it means we can add this permission as allowed.
   # If it's used, CURRENTLY, we assume that the given permission isn't allowed.
-  #
-  # TODO: delegate to the original subject if it was given
-  #       and intercept NoMethodError
   #
   Intruder = Struct.new(:intruded) do
     def method_missing(*)
