@@ -5,6 +5,7 @@ Gem::Specification.new do |spec|
   spec.version       = Grabli::VERSION
   spec.authors       = ["dikond"]
   spec.email         = ["di.kondratenko@gmail.com"]
+  spec.license       = "wtfpl"
 
   spec.summary       = "Grab permissions from your Pundit policies"
   spec.homepage      = "https://github.com/dikond/grabli"
@@ -15,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependncy      "pundit", "> 0"
+  spec.add_runtime_dependency     "pundit", "> 0"
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
