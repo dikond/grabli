@@ -1,34 +1,72 @@
 # Grabli
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/grabli`. To experiment with that code, run `bin/console` for an interactive prompt.
+Hola :v:
 
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'grabli'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install grabli
+The very specific goal of this gem is to extract pundit policy permissions to something serializable... like a ruby array! Why do you need that? To tell the front-end application or API consumer what you think of the current user, hehe :smirk: As a bonus, I find it easier to write unit tests for policies. But to have a dependency on third-party gems for unit tests, even as awesome as this one, may be undesirable.
 
 ## Usage
 
-TODO: Write usage instructions here
+With a given `UserPolicy` (e.g. the one defined in `/spec/spec_helper.rb`) you can do:
 
-## Development
+```ruby
+require 'grabli'
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Grabli.new.collect(@user, @company)
+# => [:create?, :update?]
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Grabli.new.collect(@user, :company)
+# => [:create?]
+```
+
+Let's say your app have a public Rest API. It may look like:
+
+```ruby
+require 'grabli'
+
+class Api::UsersController < ApplicationController
+  def show
+    @user = User.find(params[:id])
+    authorize @user
+
+    permissions = Grabli.new.collect(current_user, @user)
+
+    render json: { user: @user.to_json, permissions: permissions }
+  end
+end
+```
+
+You can then create a helper and use it across your app, for example:
+
+```ruby
+# /app/controllers/application_controller.rb
+require 'grabli'
+
+class ApplicationController
+  def collect_permissions_for(subject)
+    Grabli.new.collect(current_user, subject)
+  end
+  helper_method :collect_permissions_for
+end
+
+
+# /app/controllers/api/users_controller.rb
+class Api::UsersController < ApplicationController
+  def show
+    @user = User.find(params[:id])
+    authorize @user
+
+    render json: { user: @user.to_json, permissions: collect_permissions_for(@user) }
+  end
+end
+```
+
+## Further plans
+
+1) Improve cases when subject is a `Symbol`
+
+Since pundit policy doesn't limit the subject types it can be anything, even a `Symbol`.
+
+Make `Intruder` a bit more clever proxy object which delegates to the subject and intercepts `NoMethodError` for cases when `Symbol` subject mean "no subject".
 
 ## Contributing
 
