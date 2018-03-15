@@ -6,7 +6,7 @@ The very specific goal of this gem is to extract pundit policy permissions to so
 
 ## Usage
 
-With a given `UserPolicy` (e.g. the one defined in `/spec/spec_helper.rb`) you can do:
+With a given `CompanyPolicy` you can do:
 
 ```ruby
 require 'grabli'
@@ -45,7 +45,6 @@ class ApplicationController
   def collect_permissions_for(subject)
     Grabli.new.collect(current_user, subject)
   end
-  helper_method :collect_permissions_for
 end
 
 
@@ -59,6 +58,10 @@ class Api::UsersController < ApplicationController
   end
 end
 ```
+
+## Permissions lookup
+
+While fetching permissions, Grabli looks for *public instance methods* defined on particular policy class. It means Grabli *will ignore inherited and private permissions*. It will also ignore all `permitted_attributes` methods on your policy.
 
 ## Further plans
 
