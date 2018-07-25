@@ -2,6 +2,20 @@ require "grabli/version"
 require "pundit"
 
 class Grabli
+  PolicyNotFound = Class.new(StandardError)
+
+  #
+  # You can configure grabli by passing options to initializer
+  # @param namespace: nil [module] set the namespace for your policies
+  #
+  # @example
+  #   # will search policies under specified namespace, e.g. User::SomePolicy
+  #   Grabli.new(namespace: User)
+  #
+  def initialize(namespace: nil)
+    @namespace = namespace
+  end
+
   #
   # Collect allowed policy permissions for the given user.
   #
@@ -18,8 +32,9 @@ class Grabli
   #
   def collect(user, subject)
     policy_class(subject)
+      .tap { |policy| raise PolicyNotFound if policy.nil? }
       .public_instance_methods(false)
-      .reject! { |n| n =~ /permitted_attributes/ }
+      .reject { |n| n =~ /permitted_attributes/ }
       .each_with_object([]) do |permission, collection|
         # allows to collect permissions without subject, for more see Intruder
         isubject = subject.is_a?(Symbol) ? Intruder.new(false) : subject
@@ -27,7 +42,6 @@ class Grabli
 
         collection << permission if allowed? policy, permission
       end
-      .sort
   end
 
   # Check whether certain permission is allowed.
@@ -49,7 +63,11 @@ class Grabli
   end
 
   private def policy_class(record)
-    Pundit::PolicyFinder.new(record).policy
+    if @namespace.nil?
+      Pundit::PolicyFinder.new(record).policy
+    else
+      Pundit::PolicyFinder.new([@namespace, record]).policy
+    end
   end
 
   #

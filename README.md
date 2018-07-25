@@ -59,6 +59,26 @@ class Api::UsersController < ApplicationController
 end
 ```
 
+### Namespaced policies
+
+If you have namespaced policies, something like
+
+```ruby
+class User
+  class PetPolicy < ApplicationPolicy
+    def feed?
+      true
+    end
+  end
+end
+```
+
+You can specify the namespace by passing it to `#new`
+
+```ruby
+Grabli.new(namespace: User).collect(@current_user, @pet)
+```
+
 ## Permissions lookup
 
 While fetching permissions, Grabli looks for *public instance methods* defined on particular policy class. It means Grabli *will ignore inherited and private permissions*. It will also ignore all `permitted_attributes` methods on your policy.
