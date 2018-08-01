@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    grabli (0.1.0)
+    grabli (0.2.0)
       pundit (> 0)
 
 GEM

@@ -40,7 +40,7 @@ class Grabli
         isubject = subject.is_a?(Symbol) ? Intruder.new(false) : subject
         policy = policy_class(subject).new(user, isubject)
 
-        collection << permission if allowed? policy, permission
+        collection << permission if allowed?(policy, permission)
       end
   end
 
@@ -58,7 +58,9 @@ class Grabli
   #
   def allowed?(policy, permission)
     result = policy.public_send(permission)
-    return !policy.record.intruded if policy.record.is_a?(Intruder)
+
+    return false if policy.record.is_a?(Intruder) && policy.record.intruded
+
     result
   end
 

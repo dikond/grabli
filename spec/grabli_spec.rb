@@ -26,6 +26,10 @@ class UserPolicy < Struct.new(:current_user, :record)
     manage_occupied? || current_user.admin
   end
 
+  def destroy?
+    false
+  end
+
   def permitted_attributes
     %i[foo]
   end
