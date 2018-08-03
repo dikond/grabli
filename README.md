@@ -30,7 +30,7 @@ class Api::UsersController < ApplicationController
 
     permissions = Grabli.new.collect(current_user, @user)
 
-    render json: { user: @user.to_json, permissions: permissions }
+    render json: { user: @user.to_hash, permissions: permissions }
   end
 end
 ```
@@ -54,7 +54,7 @@ class Api::UsersController < ApplicationController
     @user = User.find(params[:id])
     authorize @user
 
-    render json: { user: @user.to_json, permissions: collect_permissions_for(@user) }
+    render json: { user: @user.to_hash, permissions: collect_permissions_for(@user) }
   end
 end
 ```
